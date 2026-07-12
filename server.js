@@ -81,8 +81,8 @@ const upload = multer({
   storage,
   limits: { fileSize: 8 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const ok = ["image/png", "image/jpeg", "image/webp"].includes(file.mimetype);
-    cb(ok ? null : new Error("Nur PNG, JPG oder WEBP erlaubt"), ok);
+    const ok = ["image/png", "image/jpeg", "image/webp", "image/avif"].includes(file.mimetype);
+    cb(ok ? null : new Error("Nur PNG, JPG, WEBP oder AVIF erlaubt"), ok);
   },
 });
 
