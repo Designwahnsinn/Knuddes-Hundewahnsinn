@@ -4,11 +4,45 @@ const crypto = require("crypto");
 const express = require("express");
 const session = require("express-session");
 const multer = require("multer");
+const nodemailer = require("nodemailer");
 const db = require("./db");
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "hundewahnsinn2026";
 const SESSION_SECRET = process.env.SESSION_SECRET || "change-me-in-production";
+
+const SMTP_CONFIGURED = process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS;
+const mailer = SMTP_CONFIGURED
+  ? nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT || 587),
+      secure: Number(process.env.SMTP_PORT) === 465,
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    })
+  : null;
+
+async function notifyNewRequest(request) {
+  if (!mailer) {
+    console.log("SMTP nicht konfiguriert – E-Mail-Benachrichtigung übersprungen.");
+    return;
+  }
+  try {
+    await mailer.sendMail({
+      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      to: process.env.NOTIFY_EMAIL || process.env.SMTP_USER,
+      subject: `Neue Konfigurator-Anfrage von ${request.name}`,
+      text: [
+        `Name: ${request.name}`,
+        `E-Mail: ${request.email}`,
+        `Gurtband: ${request.gurtband ? request.gurtband.name : "-"}`,
+        `Stoff: ${request.stoff ? request.stoff.name : "-"}`,
+        `Nachricht: ${request.message || "-"}`,
+      ].join("\n"),
+    });
+  } catch (err) {
+    console.error("E-Mail-Benachrichtigung fehlgeschlagen:", err.message);
+  }
+}
 
 const UPLOADS_DIR = path.join(__dirname, "uploads");
 
@@ -66,6 +100,34 @@ app.get("/api/categories", (req, res) => {
   res.json(CATEGORIES);
 });
 
+app.post("/api/requests", async (req, res) => {
+  const { name, email, message, gurtbandId, stoffId } = req.body;
+  if (!name || !email || !gurtbandId || !stoffId) {
+    return res.status(400).json({ error: "Name, E-Mail, Gurtband und Stoff sind Pflichtfelder" });
+  }
+
+  const materials = db.getMaterials();
+  const gurtband = materials.find((m) => m.id === gurtbandId);
+  const stoff = materials.find((m) => m.id === stoffId);
+  if (!gurtband || !stoff) {
+    return res.status(400).json({ error: "Gewähltes Gurtband oder Stoff nicht gefunden" });
+  }
+
+  const request = db.addRequest({
+    id: crypto.randomUUID(),
+    name,
+    email,
+    message: message || "",
+    gurtband: { id: gurtband.id, name: gurtband.name, image: gurtband.image },
+    stoff: { id: stoff.id, name: stoff.name, image: stoff.image },
+    createdAt: new Date().toISOString(),
+  });
+
+  notifyNewRequest(request);
+
+  res.status(201).json({ ok: true });
+});
+
 // --- Login ---
 app.get("/mitarbeiter", (req, res) => {
   if (req.session.loggedIn) return res.redirect("/mitarbeiter/upload");
@@ -119,6 +181,16 @@ app.delete("/api/admin/materials/:id", requireAuth, (req, res) => {
   const filePath = path.join(UPLOADS_DIR, path.basename(removed.image));
   fs.unlink(filePath, () => {});
 
+  res.json({ ok: true });
+});
+
+app.get("/api/admin/requests", requireAuth, (req, res) => {
+  res.json(db.getRequests());
+});
+
+app.delete("/api/admin/requests/:id", requireAuth, (req, res) => {
+  const removed = db.deleteRequest(req.params.id);
+  if (!removed) return res.status(404).json({ error: "Nicht gefunden" });
   res.json({ ok: true });
 });
 

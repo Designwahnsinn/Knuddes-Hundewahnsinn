@@ -87,6 +87,33 @@
       cursor: pointer;
     }
     .delete-btn:hover { opacity: 0.9; }
+
+    .section-heading {
+      color: var(--accent);
+      font-size: 1.3rem;
+      margin: 3rem 0 1.25rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .request-list { display: grid; gap: 1rem; }
+    .request-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .request-info h3 { font-size: 1rem; margin-bottom: 0.2rem; }
+    .request-info .contact { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .request-info .choices { display: flex; gap: 1rem; margin-bottom: 0.5rem; }
+    .request-info .choices div { text-align: center; font-size: 0.75rem; color: var(--muted); }
+    .request-info .choices img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; display: block; margin-bottom: 0.25rem; }
+    .request-info .note { font-size: 0.85rem; color: var(--text); }
+    .empty-hint { color: var(--muted); font-style: italic; font-size: 0.9rem; }
   </style>
 </head>
 <body>
@@ -120,6 +147,10 @@
     </form>
 
     <div class="admin-cards" id="admin-cards"></div>
+
+    <h2 class="section-heading">Konfigurator-Anfragen</h2>
+    <div class="request-list" id="request-list"></div>
+    <p class="empty-hint" id="request-empty" hidden>Noch keine Anfragen eingegangen.</p>
   </main>
 
   <script src="/admin.js"></script>

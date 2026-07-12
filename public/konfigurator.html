@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Konfigurator – Knuddels Hundewahnsinn</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <span class="brand">🐾 Knuddels Hundewahnsinn</span>
+      <div class="nav-links">
+        <a href="/#about">Über uns</a>
+        <a href="/#materials">Material / Bestand</a>
+        <a href="/konfigurator.html">Konfigurator</a>
+        <a href="/#contact">Kontakt</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero hero-small">
+    <div class="hero-inner">
+      <h1>Konfigurator</h1>
+      <p class="subtitle">Wähle Gurtband und Stoff – wir melden uns mit einem Angebot</p>
+    </div>
+  </header>
+
+  <main>
+    <section id="configurator">
+      <div class="configurator-layout">
+        <div class="configurator-options">
+          <h2 class="step-heading">1. Gurtband wählen</h2>
+          <div class="swatch-grid" id="gurtband-grid"></div>
+
+          <h2 class="step-heading">2. Stoff wählen</h2>
+          <div class="swatch-grid" id="stoff-grid"></div>
+        </div>
+
+        <div class="configurator-preview">
+          <h2 class="step-heading">Deine Auswahl</h2>
+          <div class="preview-box">
+            <div class="preview-item">
+              <span class="preview-label">Gurtband</span>
+              <img id="preview-gurtband" class="preview-img" alt="Kein Gurtband ausgewählt">
+              <p id="preview-gurtband-name" class="preview-name">Noch nicht ausgewählt</p>
+            </div>
+            <div class="preview-item">
+              <span class="preview-label">Stoff</span>
+              <img id="preview-stoff" class="preview-img" alt="Kein Stoff ausgewählt">
+              <p id="preview-stoff-name" class="preview-name">Noch nicht ausgewählt</p>
+            </div>
+          </div>
+
+          <form id="request-form" class="request-form">
+            <div>
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+              <label for="email">E-Mail</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+              <label for="message">Nachricht (optional)</label>
+              <textarea id="message" name="message" rows="3" placeholder="z.B. gewünschte Größe, Sonderwünsche"></textarea>
+            </div>
+            <button type="submit">Anfrage senden</button>
+            <p id="form-message"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Knuddels Hundewahnsinn</p>
+    <p><a class="footer-link" href="/mitarbeiter">Mitarbeiter-Login</a></p>
+  </footer>
+
+  <script src="konfigurator.js"></script>
+</body>
+</html>
