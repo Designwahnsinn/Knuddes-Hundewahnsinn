@@ -1,0 +1,12 @@
+services:
+  knuddels-hundewahnsinn:
+    build: .
+    container_name: knuddels-hundewahnsinn
+    ports:
+      - "8081:3000"
+    volumes:
+      - ./data:/app/data
+      - ./uploads:/app/uploads
+    env_file:
+      - .env
+    restart: unless-stopped
